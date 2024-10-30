@@ -14,8 +14,8 @@ uniform mat4 projection;
 void main()
 {
      // Calculate the final position of the vertex in clip space
-    gl_Position = projection * view * model * vec4(position, 2.0);
+    gl_Position = projection * view * model * vec4(position, 1.0);
 
     // Pass the UV coordinates to the fragment shader
-    UV = vertexUV;
+    UV = -vertexUV;
 }
