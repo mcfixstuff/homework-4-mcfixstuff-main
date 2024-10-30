@@ -165,7 +165,14 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
-    // TODO: set up UV buffer
+    glGenBuffers(1, &UVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, UVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
+
+    // Bind the UV buffer to the VAO
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0); // UV attribute
+    glEnableVertexAttribArray(1);
+
 
 
 
@@ -192,8 +199,10 @@ int main()
             glm::vec3(0, 0, 0), // and looks at the origin
             glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
         );
-        glm::mat4 projection;
-        // TODO: Set up the project matrix
+
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        
+
 
 
         // Get the uniform locations
@@ -205,7 +214,19 @@ int main()
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-        // TODO: bind your texture
+        glActiveTexture(GL_TEXTURE0); // Activate the texture unit first
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set texture wrapping to repeat for both S and T coordinates
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // Optionally, set texture filtering
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glUniform1i(textureID, 0); // Pass the texture unit to the shader
+
 
 
         // Draw the container (using container's vertex attributes)
